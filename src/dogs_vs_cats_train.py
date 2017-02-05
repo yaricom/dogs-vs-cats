@@ -46,7 +46,7 @@ if __name__ == '__main__':
         num_epochs     = 300,
         lr             = .05,
         lr_step_epochs = '200,250',
-        model_prefix = 'out/model/dogs_vs_cats'
+        model_prefix = './out/model_dogs_vs_cats'
     )
     args = parser.parse_args()
 
@@ -54,8 +54,6 @@ if __name__ == '__main__':
     from importlib import import_module
     net = import_module('symbols.' + args.network)
     sym = net.get_symbol(**vars(args))
-    if os.path.isdir(args.model_dir) == False:
-        os.makedirs(args.model_dir)
 
     # train
     model = fit.fit(args, sym, data.get_rec_iter)
