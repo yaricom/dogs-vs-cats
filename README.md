@@ -56,5 +56,5 @@ The resulting records will be generated in directory: `data/data_set/`
 ## Run training
 To initiate training run
 ```
-python src/dogs_vs_cats_train.py --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
+python src/dogs_vs_cats_train.py --data-train "data/data_set/imgdata_train.rec" --data-val "data/data_set/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 ```
