@@ -58,3 +58,16 @@ To initiate training run
 ```
 python src/dogs_vs_cats_train.py --data-train "data/data_set/imgdata_train.rec" --data-val "data/data_set/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 ```
+
+## Run prediction over trained model
+After model training complete prepare test data set by running following command.
+
+First create list of images in the data set:
+```
+python tools/im2rec.py --list True --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set/imgdata data/test
+```
+
+Then run records generation
+```
+python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/test
+```
