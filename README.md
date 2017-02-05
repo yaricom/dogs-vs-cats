@@ -13,6 +13,7 @@ Following packages must be installed. We will consider installation on macOS Sie
 # Prepare Datasets
 Our goal is to generate two files, imgdata_train.rec for training and imgdata_val.rec for validation, and the former contains 95% images.
 This can be done with following steps:
+
 1. Make sure that images belonging to the same class are placed in the same directory:
 	* cats - into directory named `cat`
 	* dogs - into directory named `dog`
