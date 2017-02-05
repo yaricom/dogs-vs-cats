@@ -4,23 +4,6 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 from common import data, fit
 import mxnet as mx
-#from score import score
-
-def validate_model(model, val_iter):
-    """
-    The model validation against validation data records
-        Args:
-            m: the trained model
-            val_iter: the validation records iterator
-    """
-    acc = mx.metric.create('acc')
-    g = 0.72
-    #(speed,) = score(model=m,
-    #                 data_val='data/val-5k-256.rec',
-    #                 rgb_mean='0, 0, 0', metrics=acc)
-    r = acc.get()[1]
-    print('Tested %s acc = %f, speed = %f img/sec' % (m, r, speed))
-    assert r > g and r < g + .1
 
 if __name__ == '__main__':
     # parse args
