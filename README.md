@@ -5,19 +5,19 @@ The image classification with Convolutional Neural Network build with MXnet
 
 We will install mxnet from source code.
 ```
-    # Clone mxnet repository. In terminal, run the commands WITHOUT "sudo"
-    git clone https://github.com/dmlc/mxnet.git ~/mxnet --recursive
+# Clone mxnet repository. In terminal, run the commands WITHOUT "sudo"
+git clone https://github.com/dmlc/mxnet.git ~/mxnet --recursive
 
-    # If building with GPU, add configurations to config.mk file:
-    cd ~/mxnet
-    cp make/config.mk .
-    echo "USE_CUDA=1" >>config.mk
-    echo "USE_CUDA_PATH=/usr/local/cuda" >>config.mk
-    echo "USE_CUDNN=1" >>config.mk
+# If building with GPU, add configurations to config.mk file:
+cd ~/mxnet
+cp make/config.mk .
+echo "USE_CUDA=1" >>config.mk
+echo "USE_CUDA_PATH=/usr/local/cuda" >>config.mk
+echo "USE_CUDNN=1" >>config.mk
 
-    # Install MXNet for Python with all required dependencies
-    cd ~/mxnet/setup-utils
-    bash install-mxnet-osx-python.sh
+# Install MXNet for Python with all required dependencies
+cd ~/mxnet/setup-utils
+bash install-mxnet-osx-python.sh
 ```
 
 
@@ -29,9 +29,15 @@ Make sure that images belonging to the same class are placed in the same directo
 	* cats - into directory named `data/full_train_data/cat`
 	* dogs - into directory named `data/full_train_data/dog`
 Make sure that all these class directories are in the same root directory `full_train_data`.
+
+Make sure to create output directory first
+```
+mkdir data/data_set
+```
+
 Then prepare two `.lst` files, which consist of the labels and image paths can be used for generating rec files.
 ```
-    python tools/im2rec.py --list True --recursive True --train-ratio 0.95 data/data_set/imgdata data/full_train_data
+python tools/im2rec.py --list True --recursive True --train-ratio 0.95 data/data_set/imgdata data/full_train_data
 ```
 As result two files with image lists will be generated:
 
@@ -42,6 +48,13 @@ The class labels will be generated: 0 - cat, 1 - dog
 
 Then generate the `.rec files`. We resize the images such that the short edge is at least 128px and save them with 95/100 quality. We also use 16 threads to accelerate the packing.
 ```
-    python tools/im2rec.py --resize 128 --quality 95 --num-thread 16 data/data_set/imgdata data/full_train_data
+python tools/im2rec.py --resize 128 --quality 95 --num-thread 16 data/data_set/imgdata data/full_train_data
 ```
 The resulting records will be generated in directory: `data/data_set/`
+
+
+## Run training
+To initiate training run
+```
+python src/dogs_vs_cats_train.py --network resnet --num-layers 101 --batch-size 128 --num-examples 25000
+```
