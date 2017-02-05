@@ -48,7 +48,7 @@ The class labels will be generated: 0 - cat, 1 - dog
 
 Then generate the `.rec files`. We resize the images such that the short edge is at least 128px and save them with 95/100 quality. We also use 16 threads to accelerate the packing.
 ```
-python tools/im2rec.py --resize 128 --quality 95 --num-thread 16 data/data_set/imgdata data/full_train_data
+python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/full_train_data
 ```
 The resulting records will be generated in directory: `data/data_set/`
 
@@ -56,5 +56,5 @@ The resulting records will be generated in directory: `data/data_set/`
 ## Run training
 To initiate training run
 ```
-python src/dogs_vs_cats_train.py --network resnet --num-layers 101 --batch-size 128 --num-examples 25000
+python src/dogs_vs_cats_train.py --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 ```
