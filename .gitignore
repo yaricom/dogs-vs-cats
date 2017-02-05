@@ -1,6 +1,9 @@
 # The data set
 data/*
 
+# The output directory
+out/*
+
 # History files
 .Rhistory
 .Rapp.history
@@ -34,3 +37,6 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+
+# Python compiled
+*.pyc
