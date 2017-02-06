@@ -76,5 +76,12 @@ Then run records generation
 $ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/test
 ```
 
+Finally run prediction over test data set and trained model
+```
+python src/dogs_vs_cats_predict.py --image-shape 3,32,32 --rec-prefix imgdata_test --model out/model_dogs_vs_cats out/results data/data_set
+```
+The predictions output will be stored as coma separated file into `out/results` directory.
+
+
 [1]: http://mxnet.io
 [2]: http://deeplearning.net/tutorial/lenet.html
