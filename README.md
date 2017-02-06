@@ -1,5 +1,6 @@
 # dogs-vs-cats
-The image classification with Convolutional Neural Network build with MXnet
+In this repository we will try to build image classification prediction model based on Convolutional Neural Networks architecture using [MXNet library for Deep Learning][1]
+The data set consist of 25 000 pictures of dogs and cats. The provided images has different sizes.
 
 ## Prerequisites
 
@@ -76,3 +77,6 @@ Then run records generation
 ```
 python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/test
 ```
+
+## References
+[1]: http://mxnet.io
