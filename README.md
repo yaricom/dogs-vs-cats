@@ -29,9 +29,12 @@ bash install-mxnet-osx-python.sh
 Our goal is to generate two files, imgdata_train.rec for training and imgdata_val.rec for validation, and the former contains 95% images.
 This can be done with following steps:
 
+Download train data set from [here](https://drive.google.com/open?id=0B0ChXT-rp95aa1FHa3ZmVEJLZkk) and unpack it.
+
 Make sure that images belonging to the same class are placed in the same directory:
 	* cats - into directory named `data/full_train_data/cat`
 	* dogs - into directory named `data/full_train_data/dog`
+
 Make sure that all these class directories are in the same root directory `full_train_data`.
 
 Make sure to create output directories first
@@ -64,7 +67,7 @@ To initiate training run
 python src/dogs_vs_cats_train.py --data-train "data/data_set_train/imgdata_train.rec" --data-val "data/data_set_train/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 ```
 
-The sample output for first four epoch runs are following:
+The sample output for first the four epoch's runs are following:
 ```
 python src/dogs_vs_cats_train.py --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 INFO:root:start with arguments Namespace(batch_size=128, benchmark=0, data_nthreads=4, data_train='data/data_set/imgdata_train.rec', data_val='data/data_set/imgdata_val.rec', disp_batches=20, gpus=None, image_shape='3,32,32', kv_store='device', load_epoch=None, lr=0.05, lr_factor=0.1, lr_step_epochs='200,250', max_random_aspect_ratio=0, max_random_h=36, max_random_l=50, max_random_rotate_angle=0, max_random_s=50, max_random_scale=1, max_random_shear_ratio=0, min_random_scale=1, model_prefix='./out/model_dogs_vs_cats', mom=0.9, monitor=0, network='resnet', num_classes=2, num_epochs=300, num_examples=25000, num_layers=18, optimizer='sgd', pad_size=4, random_crop=1, random_mirror=1, rgb_mean='123.68,116.779,103.939', test_io=0, top_k=0, wd=0.0001)
@@ -126,24 +129,33 @@ INFO:root:Epoch[3] Validation-accuracy=0.823785
 
 As it can be seen validation accuracy increase, but prediction model should converge in order to gurantee that our CNN is learning something. Unfortunatelly due to hardware limitations I was unable to test over all 300 epochs in order to check if model converge, but interested parties may try this with better hardware setup. With my hardware setup (CPU only, 2.5 GHz Intel Core i3, 8Gb RAM, SSD) training over 300 epochs would take about 740 hours (or one month). I believe that within CUDA-enabled setup it will take rather hours. 
 
+The trained models for first four epochs available for download [here](https://drive.google.com/open?id=0B0ChXT-rp95aVURpbEVRNkxCcTA)
+
 ## Run prediction over trained model
-After model training complete prepare test data set by running following command.
+After model training complete we will prepare test data set. And then do predictions over it.
+
+Download test data files from [here](https://drive.google.com/open?id=0B0ChXT-rp95aUGRnZTgyUWpjNDg) and unpack it.
 
 First create list of images in the data set:
+
 ```
 python tools/im2rec.py --list True --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set_test/imgdata data/test
 ```
 
 Then run records generation
+
 ```
 python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set_test/imgdata data/test
 ```
 
 Finally run prediction over test data set and trained model
+
 ```
 python src/dogs_vs_cats_predict.py --image-shape 3,32,32 --rec-prefix imgdata_test --model out/model_dogs_vs_cats --model-checkpoint 4 out/results data/data_set_test
 ```
-The predictions output will be stored as coma separated file into `out/results` directory.
+
+The predictions output will be stored as coma separated file into `out/results` directory. 
+The sample results output file can be found [here](https://github.com/yaricom/dogs-vs-cats/tree/master/contents/p_results.csv)
 
 
 [1]: http://mxnet.io
