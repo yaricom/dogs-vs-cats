@@ -41,7 +41,7 @@ $ mkdir data/data_set
 
 Then prepare two `.lst` files, which consist of the labels and image paths can be used for generating rec files.
 ```
-$ python tools/im2rec.py --list True --recursive True --train-ratio 0.95 data/data_set/imgdata data/full_train_data
+$ python tools/im2rec.py --list True --recursive True --train-ratio 0.95 data/data_set/train/imgdata data/full_train_data
 ```
 As result two files with image lists will be generated:
 
@@ -50,9 +50,9 @@ As result two files with image lists will be generated:
 
 The class labels will be generated: 0 - cat, 1 - dog
 
-Then generate the `.rec files`. We resize the images such that the short edge is at least 128px and save them with 95/100 quality. We also use 16 threads to accelerate the packing.
+Then generate the `.rec files`. We resize the images such that the short edge is at least 32px and save them with 95/100 quality. We also use 16 threads to accelerate the packing.
 ```
-$ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/full_train_data
+$ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/train/imgdata data/full_train_data
 ```
 The resulting records will be generated in directory: `data/data_set/`
 
@@ -60,7 +60,7 @@ The resulting records will be generated in directory: `data/data_set/`
 ## Run training
 To initiate training run
 ```
-$ python src/dogs_vs_cats_train.py --data-train "data/data_set/imgdata_train.rec" --data-val "data/data_set/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
+$ python src/dogs_vs_cats_train.py --data-train "data/data_set/train/imgdata_train.rec" --data-val "data/data_set/train/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 ```
 
 ## Run prediction over trained model
@@ -68,17 +68,17 @@ After model training complete prepare test data set by running following command
 
 First create list of images in the data set:
 ```
-$ python tools/im2rec.py --list True --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set/imgdata data/test
+$ python tools/im2rec.py --list True --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set/test/imgdata data/test
 ```
 
 Then run records generation
 ```
-$ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/test
+$ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set/test/imgdata data/test
 ```
 
 Finally run prediction over test data set and trained model
 ```
-python src/dogs_vs_cats_predict.py --image-shape 3,32,32 --rec-prefix imgdata_test --model out/model_dogs_vs_cats out/results data/data_set
+python src/dogs_vs_cats_predict.py --image-shape 3,32,32 --rec-prefix imgdata_test --model out/model_dogs_vs_cats out/results data/data_set/test
 ```
 The predictions output will be stored as coma separated file into `out/results` directory.
 
