@@ -3,8 +3,11 @@ import sys
 import argparse
 import logging
 logging.basicConfig(level=logging.DEBUG)
+import time
 from common import data, fit
 import mxnet as mx
+import numpy as np
+import pandas as pd
 
 def read_list(lst_path):
     """
@@ -54,17 +57,20 @@ def data_iterator(rec_file, lst_file, batch_size, image_shape, args):
         num_parts           = nworker,
         part_index          = rank
     )
+    return dataiter
 
 def parse_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='Do prediction from image list and record database')
-    parser.add_argument('prefix', help='prefix of prediction results files.')
+    parser.add_argument('res_dir', help='the path to directory to store results files.')
     parser.add_argument('root', help='path to folder containing lst and rec files.')
     parser.add_argument('--rec-prefix', type=str, default="imgdata_test",
                         help='the prefix for list and rec file names.')
     parser.add_argument('--model', type=str, nargs=1,
                         help='the path to the saved model file.')
+    parser.add_argument('--model-checkpoint', type=int, nargs=1,
+                        help='the model checkpoint number to be loaded.')
     parser.add_argument('--image-shape', type=str,
                         help='the image shape feed into the network, e.g. (3,224,224)')
     parser.add_argument('--rgb-mean', type=str, default='123.68,116.779,103.939',
@@ -77,7 +83,7 @@ def parse_args():
         image_shape    = '3,32,32'
     )
     args = parser.parse_args()
-    args.prefix = os.path.abspath(args.prefix)
+    args.res_dir = os.path.abspath(args.res_dir)
     args.root = os.path.abspath(args.root)
     return args
 
@@ -92,9 +98,14 @@ if __name__ == '__main__':
     image_shape = tuple([int(l) for l in args.image_shape.split(',')])
     test_iter = data_iterator(rec_path, lst_path, batch_size, image_shape, args)
     file_list = read_list(lst_path)
+    print 'test data iterator: %s' % (test_iter)
+    print 'file list: %s' % (file_list)
 
     # load model
-    sym, arg_params, aux_params = mx.model.load_checkpoint(args.model, 0)
+    checkpoint = args.model_checkpoint[0]
+    model = args.model[0]
+    print 'Loading model: %s from checkpoint: %d' % (model, checkpoint)
+    sym, arg_params, aux_params = mx.model.load_checkpoint(model, checkpoint)
     mod = mx.mod.Module(
         symbol=sym,
         context=mx.cpu()
@@ -107,8 +118,37 @@ if __name__ == '__main__':
     mod.set_params(arg_params, aux_params)
 
     # Run predictions
+    print 'run predictions over test data'
     y = mod.predict(test_iter) # will collect and return all the prediction results.
     print 'shape of predict: %s' % (y.shape,)
+
+    # collect predictions over file ids
+    pred_count = y.shape[0]
+    print 'collecting predictions for: %d samples' % (pred_count)
+    results = np.empty([pred_count, 2], np.int32)
+    for i, item in enumerate(file_list):
+        file_id = int(item[1].split('.')[0])
+        confidence = [y[i][0].asnumpy()[0], y[i][1].asnumpy()[0]]
+        label = 0 if (confidence[0] > confidence[1]) else 1;
+        # print 'image id: %d,\tlabel: %d,\tlabels confidence = [%s, %s]' % (file_id, label, confidence[0], confidence[1])
+        results[i,] = [file_id, label]
+
+    # sort results by file ID
+    results = results[results[:,0].argsort()]
+
+    # save as CSV file through Pandas
+    df = pd.DataFrame(results, columns = ['id', 'label'])
+    res_dir = os.path.dirname(args.res_dir)
+    if os.path.isdir(args.res_dir) == False:
+        os.makedirs(args.res_dir)
+
+    current_time = time.localtime()
+    file_name = os.path.join(args.res_dir, time.strftime('p_results_%d-%b-%Y_%H_%M_%S.csv', current_time))
+    df.to_csv(file_name, header=True, index=False)
+
+    print 'Results saved to: %s' % (file_name)
+
+
 
 
 

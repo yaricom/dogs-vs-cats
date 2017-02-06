@@ -79,7 +79,7 @@ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 --recursive Fals
 
 Finally run prediction over test data set and trained model
 ```
-python src/dogs_vs_cats_predict.py --image-shape 3,32,32 --rec-prefix imgdata_test --model out/model_dogs_vs_cats out/results data/data_set_test
+python src/dogs_vs_cats_predict.py --image-shape 3,32,32 --rec-prefix imgdata_test --model out/model_dogs_vs_cats --model-checkpoint 4 out/results data/data_set_test
 ```
 The predictions output will be stored as coma separated file into `out/results` directory.
 
