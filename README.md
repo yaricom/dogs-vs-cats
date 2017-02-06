@@ -32,8 +32,9 @@ This can be done with following steps.
 First download train data set from [here](https://drive.google.com/open?id=0B0ChXT-rp95aa1FHa3ZmVEJLZkk) and unpack it.
 
 Then create corresponding directories and make sure that images belonging to the same class are placed in the same directory:
-	* cats - into directory named `data/full_train_data/cat`
-	* dogs - into directory named `data/full_train_data/dog`
+
+* cats - into directory named `data/full_train_data/cat`
+* dogs - into directory named `data/full_train_data/dog`
 
 Make sure to create output directories where generated data sets will be stored.
 
@@ -64,7 +65,7 @@ The resulting records will be generated in directory: `data/data_set/`
 
 
 ## Run training
-To initiate training run
+Start training with following command
 
 ```
 python src/dogs_vs_cats_train.py --data-train "data/data_set_train/imgdata_train.rec" --data-val "data/data_set_train/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
