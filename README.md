@@ -3,7 +3,13 @@ The image classification with Convolutional Neural Network build with MXnet
 
 ## Prerequisites
 
-We will install mxnet from source code.
+Make sure that you have Xcode command line tools installed on your macOS. 
+Run following command to install if missed:
+```
+$sudo xcode-select --install
+```
+
+Next we will install mxnet from source code as it seems the best way to do this now.
 ```
 # Clone mxnet repository. In terminal, run the commands WITHOUT "sudo"
 git clone https://github.com/dmlc/mxnet.git ~/mxnet --recursive
@@ -19,7 +25,6 @@ echo "USE_CUDNN=1" >>config.mk
 cd ~/mxnet/setup-utils
 bash install-mxnet-osx-python.sh
 ```
-
 
 ## Prepare Datasets
 Our goal is to generate two files, imgdata_train.rec for training and imgdata_val.rec for validation, and the former contains 95% images.
