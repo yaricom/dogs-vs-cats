@@ -1,5 +1,5 @@
 # dogs-vs-cats
-In this repository we will try to build image classification prediction model based on Convolutional Neural Networks architecture using [MXNet library for Deep Learning][1]
+In this repository we will try to build image classification prediction model based on [Convolutional Neural Networks][2] architecture using [MXNet library for Deep Learning][1].
 The data set consist of 25 000 pictures of dogs and cats. The provided images has different sizes.
 
 ## Prerequisites
@@ -7,24 +7,22 @@ The data set consist of 25 000 pictures of dogs and cats. The provided images ha
 Make sure that you have Xcode command line tools installed on your macOS. 
 Run following command to install if missed:
 ```
-$sudo xcode-select --install
+$ sudo xcode-select --install
 ```
 
 Next we will install mxnet from source code as it seems the best way to do this now.
+The installation script will use Homebrew, so make sure that you have following:
+```
+echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> ~/Library/Python/2.7/lib/python/site-packages/homebrew.pth
+```
+Next download MXNet source code and run installation script
 ```
 # Clone mxnet repository. In terminal, run the commands WITHOUT "sudo"
-git clone https://github.com/dmlc/mxnet.git ~/mxnet --recursive
-
-# If building with GPU, add configurations to config.mk file:
-cd ~/mxnet
-cp make/config.mk .
-echo "USE_CUDA=1" >>config.mk
-echo "USE_CUDA_PATH=/usr/local/cuda" >>config.mk
-echo "USE_CUDNN=1" >>config.mk
+$ git clone https://github.com/dmlc/mxnet.git ~/mxnet --recursive
 
 # Install MXNet for Python with all required dependencies
-cd ~/mxnet/setup-utils
-bash install-mxnet-osx-python.sh
+$ cd ~/mxnet/setup-utils
+$ bash install-mxnet-osx-python.sh
 ```
 
 ## Prepare Datasets
@@ -38,12 +36,12 @@ Make sure that all these class directories are in the same root directory `full_
 
 Make sure to create output directory first
 ```
-mkdir data/data_set
+$ mkdir data/data_set
 ```
 
 Then prepare two `.lst` files, which consist of the labels and image paths can be used for generating rec files.
 ```
-python tools/im2rec.py --list True --recursive True --train-ratio 0.95 data/data_set/imgdata data/full_train_data
+$ python tools/im2rec.py --list True --recursive True --train-ratio 0.95 data/data_set/imgdata data/full_train_data
 ```
 As result two files with image lists will be generated:
 
@@ -54,7 +52,7 @@ The class labels will be generated: 0 - cat, 1 - dog
 
 Then generate the `.rec files`. We resize the images such that the short edge is at least 128px and save them with 95/100 quality. We also use 16 threads to accelerate the packing.
 ```
-python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/full_train_data
+$ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/full_train_data
 ```
 The resulting records will be generated in directory: `data/data_set/`
 
@@ -62,7 +60,7 @@ The resulting records will be generated in directory: `data/data_set/`
 ## Run training
 To initiate training run
 ```
-python src/dogs_vs_cats_train.py --data-train "data/data_set/imgdata_train.rec" --data-val "data/data_set/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
+$ python src/dogs_vs_cats_train.py --data-train "data/data_set/imgdata_train.rec" --data-val "data/data_set/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 ```
 
 ## Run prediction over trained model
@@ -70,13 +68,13 @@ After model training complete prepare test data set by running following command
 
 First create list of images in the data set:
 ```
-python tools/im2rec.py --list True --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set/imgdata data/test
+$ python tools/im2rec.py --list True --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set/imgdata data/test
 ```
 
 Then run records generation
 ```
-python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/test
+$ python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set/imgdata data/test
 ```
 
-## References
 [1]: http://mxnet.io
+[2]: http://deeplearning.net/tutorial/lenet.html

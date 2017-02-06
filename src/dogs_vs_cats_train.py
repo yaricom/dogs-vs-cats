@@ -22,7 +22,7 @@ if __name__ == '__main__':
         data_val       = 'data/data_set/imgdata_val.rec',
         num_classes    = 2,
         num_examples   = 25000,
-        image_shape    = '3,128,128',
+        image_shape    = '3,32,32',
         pad_size       = 4,
         # train
         batch_size     = 128,
