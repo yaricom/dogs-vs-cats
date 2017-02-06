@@ -1,4 +1,4 @@
-# dogs-vs-cats
+# Dogs vs Cats
 In this repository we will try to build image classification prediction model based on [Convolutional Neural Networks][2] architecture using [MXNet library for Deep Learning][1].
 The data set consist of 25 000 pictures of dogs and cats. The provided images has different sizes.
 
@@ -27,23 +27,23 @@ bash install-mxnet-osx-python.sh
 
 ## Prepare Datasets
 Our goal is to generate two files, imgdata_train.rec for training and imgdata_val.rec for validation, and the former contains 95% images.
-This can be done with following steps:
+This can be done with following steps.
 
-Download train data set from [here](https://drive.google.com/open?id=0B0ChXT-rp95aa1FHa3ZmVEJLZkk) and unpack it.
+First download train data set from [here](https://drive.google.com/open?id=0B0ChXT-rp95aa1FHa3ZmVEJLZkk) and unpack it.
 
-Make sure that images belonging to the same class are placed in the same directory:
+Then create corresponding directories and make sure that images belonging to the same class are placed in the same directory:
 	* cats - into directory named `data/full_train_data/cat`
 	* dogs - into directory named `data/full_train_data/dog`
 
-Make sure that all these class directories are in the same root directory `full_train_data`.
+Make sure to create output directories where generated data sets will be stored.
 
-Make sure to create output directories first
 ```
 mkdir data/data_set_train
 mkdir data/data_set_test
 ```
 
-Then prepare two `.lst` files, which consist of the labels and image paths can be used for generating rec files.
+After that we will prepare two `.lst` files, which consist of the labels and image paths can be used for generating rec files.
+
 ```
 python tools/im2rec.py --list True --recursive True --train-ratio 0.95 data/data_set_train/imgdata data/full_train_data
 ```
@@ -52,20 +52,24 @@ As result two files with image lists will be generated:
 * `data/data_set_train/imgdata_train.lst` - train data list
 * `data/data_set_train/imgdata_val.lst` - validation data list
 
-The class labels will be generated: 0 - cat, 1 - dog
+The class labels will be generated: `0 - cat, 1 - dog`
 
-Then generate the `.rec files`. We resize the images such that the short edge is at least 32px and save them with 95/100 quality. We also use 16 threads to accelerate the packing.
+Finaly we will generate the `.rec files`. We will resize the images such that the short edge is at least 32px and save them with 95/100 quality. We also use 16 threads to accelerate the packing. I believe that bigger image sizes may improve prediction accuracy, but it will result in dramatic increase of learning time, which is which is prohibitive in my hardware setup.
+
 ```
 python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 data/data_set_train/imgdata data/full_train_data
 ```
+
 The resulting records will be generated in directory: `data/data_set/`
 
 
 ## Run training
 To initiate training run
+
 ```
 python src/dogs_vs_cats_train.py --data-train "data/data_set_train/imgdata_train.rec" --data-val "data/data_set_train/imgdata_val.rec"  --image-shape 3,32,32 --network resnet --num-layers 18 --batch-size 128 --num-examples 25000
 ```
+I believe that bigger number of layers may improve prediction accuracy, but it will result in dramatic increase of learning time, which is prohibitive in my hardware setup.
 
 The sample output for first the four epoch's runs are following:
 ```
@@ -134,15 +138,15 @@ The trained models for first four epochs available for download [here](https://d
 ## Run prediction over trained model
 After model training complete we will prepare test data set. And then do predictions over it.
 
-Download test data files from [here](https://drive.google.com/open?id=0B0ChXT-rp95aUGRnZTgyUWpjNDg) and unpack it.
+First download test data files from [here](https://drive.google.com/open?id=0B0ChXT-rp95aUGRnZTgyUWpjNDg) and unpack it.
 
-First create list of images in the data set:
+Then create list of images in the data set
 
 ```
 python tools/im2rec.py --list True --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set_test/imgdata data/test
 ```
 
-Then run records generation
+After run records generation
 
 ```
 python tools/im2rec.py --resize 32 --quality 95 --num-thread 16 --recursive False --shuffle False  --train-ratio 0.0 --test-ratio 1.0 data/data_set_test/imgdata data/test
